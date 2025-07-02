@@ -4,6 +4,7 @@ import { prisma } from "@/config/prisma.config";
 import { Decimal } from "@/generated/prisma/runtime/library";
 import { CreateOrderActionResult, MealData } from "./create-order.types";
 import { v4 as uuidv4 } from "uuid";
+import { revalidatePath } from "next/cache";
 
 export async function createOrderAction(
   meals: MealData[]
@@ -30,6 +31,8 @@ export async function createOrderAction(
     const mealsResult = await prisma.meal.createMany({
       data: mealData,
     });
+
+    revalidatePath("/");
     
     return { orderId: orderResult.id, mealsCount: mealsResult.count };
   } catch (e) {

@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { CreateOrderValue, MealData } from "./create-order.types";
 import { MealSelectController } from "./meal-select-controller";
 import { createOrderAction } from "./create-order.actions";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 
 type CreateOrderProps = {
   open: boolean;
@@ -55,12 +55,11 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
 
   const onSubmit = async (values: CreateOrderValue) => {
     const result = await createOrderAction(values.meals);
-    console.log(result)
-    
+
     if (result.error) {
-      toast.error("Something went wrong when submitting your order...")
+      toast.error("Something went wrong when submitting your order...");
     } else {
-      toast.success("Order has been submitted successfully.")
+      toast.success("Order has been submitted successfully.");
     }
   };
 

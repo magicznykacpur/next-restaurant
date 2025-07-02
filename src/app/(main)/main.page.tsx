@@ -58,8 +58,8 @@ export async function MainPage() {
               </div>
 
               <div className="mt-4">
-                {Object.entries(getFormattedMeals(order.meals)).map((entry) => (
-                  <div className="grid grid-cols-3 w-3/5">
+                {Object.entries(getFormattedMeals(order.meals)).map((entry, index) => (
+                  <div key={`meal-${index}`} className="grid grid-cols-3 w-3/5">
                     <span>
                       <strong>{entry[0]}</strong>{" "}
                     </span>
@@ -67,7 +67,7 @@ export async function MainPage() {
                       {formatPrice(entry[1].price)}
                     </span>
                     <span className="text-">
-                      servings - <strong>{entry[1].quantity}</strong>
+                      servings: <strong>{entry[1].quantity}</strong>
                     </span>
                   </div>
                 ))}
