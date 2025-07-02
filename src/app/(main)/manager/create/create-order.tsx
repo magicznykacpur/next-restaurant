@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { z } from "zod";
 
-import { Input } from "@/components/form/input";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,14 +25,28 @@ const initialValues: CreateOrderValue = {
   meals: [],
 };
 
-const schema = z.object({});
+const schema = z.object({
+  meals: z.array(
+    z.object({
+      id: z.string(),
+      price: z.number(),
+      name: z.string({ message: "Name required." }),
+      quantity: z
+        .number({ message: "Quantity cannot be lower than 1." })
+        .min(1),
+    })
+  ),
+});
 
 export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
-  });
+  const { control, handleSubmit, formState, setValue, getValues, register } =
+    useForm<z.infer<typeof schema>>({
+      resolver: zodResolver(schema),
+    });
 
-  const onSubmit = async (values: CreateOrderValue) => {};
+  const onSubmit = async (values: CreateOrderValue) => {
+    console.log(values);
+  };
 
   const [formMeals, setFormMeals] = useState<MealData[]>(initialValues.meals);
   const handleNewMeal = () => {
@@ -54,54 +67,33 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          onChange={() => {
+            console.log(formState.errors);
+            console.log(getValues());
+          }}
+        >
           <div className="flex flex-col justify-between">
             {formMeals.length > 0 ? (
               formMeals.map((mealData, i) => (
-                <div className="flex">
-                  <MealSelectController
-                    meals={meals}
-                    control={form.control}
-                    index={i}
-                    className="w-1/2"
-                  />
-                  <Input
-                    placeholder="Quantity"
-                    type="number"
-                    className="w-1/8 ml-5"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={handleMealRemove(i)}
-                    className="ml-auto text-4xl"
-                  >
-                    X
-                  </Button>
-                </div>
-              ))
-            ) : (
-              <div className="flex">
                 <MealSelectController
+                  register={register}
+                  setValue={setValue}
+                  handleMealRemove={handleMealRemove}
                   meals={meals}
-                  control={form.control}
-                  index={0}
+                  index={i}
                   className="w-1/2"
                 />
-                <Input
-                  placeholder="Quantity"
-                  type="number"
-                  className="w-1/4 ml-5"
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={handleMealRemove(0)}
-                  className="ml-auto"
-                >
-                  X
-                </Button>
-              </div>
+              ))
+            ) : (
+              <MealSelectController
+                register={register}
+                setValue={setValue}
+                handleMealRemove={handleMealRemove}
+                meals={meals}
+                index={0}
+              />
             )}
           </div>
 
