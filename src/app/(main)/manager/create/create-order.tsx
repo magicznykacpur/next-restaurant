@@ -12,10 +12,10 @@ import {
 import { MealModel } from "@/models/meal.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { createOrderAction } from "./create-order.actions";
 import { CreateOrderValue, MealData } from "./create-order.types";
 import { MealSelectController } from "./meal-select-controller";
-import { createOrderAction } from "./create-order.actions";
-import { ToastContainer, toast } from "react-toastify";
 
 type CreateOrderProps = {
   open: boolean;
