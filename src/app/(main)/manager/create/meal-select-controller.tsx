@@ -86,6 +86,7 @@ export function MealSelectController({
             valueAsNumber: true,
           })}
           type="number"
+          min={1}
         />
         {isQuantityError && (
           <Label className="absolute text-xs text-rose-500">
