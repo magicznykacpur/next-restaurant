@@ -12,18 +12,14 @@ import { Button } from "@/components/ui/button";
 import { MealModel } from "@/models/meal.model";
 import { cn } from "@/utils/cn";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { MealData } from "./create-order.types";
 
 type MealSelectControllerProps = {
   setValue: UseFormSetValue<{
-    meals: { id: string; price: number; name: string; quantity: number }[];
+    meals: MealData[];
   }>;
   register: UseFormRegister<{
-    meals: {
-      name: string;
-      id: string;
-      price: number;
-      quantity: number;
-    }[];
+    meals: MealData[];
   }>;
   handleMealRemove: (index: number) => () => void;
   index: number;
