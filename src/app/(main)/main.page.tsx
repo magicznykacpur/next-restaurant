@@ -53,24 +53,37 @@ export async function MainPage() {
           return (
             <div key={index} className="border rounded-md p-6">
               <div className="flex flex-col">
-                <strong>{`id: ${order.id.slice(0, 8)}`}</strong>
-                <strong>{`creation date: ${order.createdAt.toLocaleDateString()} ${order.createdAt.toLocaleTimeString()}`}</strong>
+                <span className="text-s">
+                  id: <strong>{` ${order.id}`}</strong>
+                </span>
+                <span>
+                  creation date:
+                  <strong>
+                    {` ${order.createdAt.toLocaleDateString()}`}
+                    {` ${order.createdAt.toLocaleTimeString()}`}
+                  </strong>
+                </span>
               </div>
 
               <div className="mt-4">
-                {Object.entries(getFormattedMeals(order.meals)).map((entry, index) => (
-                  <div key={`meal-${index}`} className="grid grid-cols-3 w-3/5">
-                    <span>
-                      <strong>{entry[0]}</strong>{" "}
-                    </span>
-                    <span className="text-emerald-700">
-                      {formatPrice(entry[1].price)}
-                    </span>
-                    <span className="text-">
-                      servings: <strong>{entry[1].quantity}</strong>
-                    </span>
-                  </div>
-                ))}
+                {Object.entries(getFormattedMeals(order.meals)).map(
+                  (entry, index) => (
+                    <div
+                      key={`meal-${index}`}
+                      className="grid grid-cols-3 w-3/5"
+                    >
+                      <span>
+                        <strong>{entry[0]}</strong>{" "}
+                      </span>
+                      <span className="text-emerald-700">
+                        {formatPrice(entry[1].price)}
+                      </span>
+                      <span className="text-">
+                        servings: <strong>{entry[1].quantity}</strong>
+                      </span>
+                    </div>
+                  )
+                )}
 
                 <div className="w-full flex justify-end text-emerald-700">
                   <span>
