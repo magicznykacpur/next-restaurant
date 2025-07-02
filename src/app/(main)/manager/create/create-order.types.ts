@@ -1,5 +1,8 @@
 export type MealData = {
-  // TODO: define meal data
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
 };
 
 export type CreateOrderValue = {

@@ -1,5 +1,5 @@
 export type MealModel = {
-  id: number;
+  id: string;
   name: string;
   price: number;
 };
