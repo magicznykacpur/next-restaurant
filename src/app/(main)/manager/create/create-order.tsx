@@ -30,7 +30,9 @@ const schema = z.object({
     z.object({
       id: z.string(),
       price: z.number(),
-      name: z.string({ message: "Name required." }),
+      name: z
+        .string()
+        .nonempty({ message: "You need to select at least one meal." }),
       quantity: z
         .number({ message: "Quantity cannot be lower than 1." })
         .min(1),
@@ -39,10 +41,15 @@ const schema = z.object({
 });
 
 export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
-  const { control, handleSubmit, formState, setValue, getValues, register } =
-    useForm<z.infer<typeof schema>>({
-      resolver: zodResolver(schema),
-    });
+  const {
+    handleSubmit,
+    formState: { errors },
+    clearErrors,
+    setValue,
+    register,
+  } = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+  });
 
   const onSubmit = async (values: CreateOrderValue) => {
     console.log(values);
@@ -67,23 +74,18 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          onChange={() => {
-            console.log(formState.errors);
-            console.log(getValues());
-          }}
-        >
+        <form onSubmit={handleSubmit(onSubmit)} onChange={() => console.log(errors)}>
           <div className="flex flex-col justify-between">
             {formMeals.length > 0 ? (
-              formMeals.map((mealData, i) => (
+              formMeals.map((_, index) => (
                 <MealSelectController
                   register={register}
                   setValue={setValue}
                   handleMealRemove={handleMealRemove}
+                  errors={errors}
+                  clearErrors={clearErrors}
                   meals={meals}
-                  index={i}
-                  className="w-1/2"
+                  index={index}
                 />
               ))
             ) : (
@@ -91,6 +93,8 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
                 register={register}
                 setValue={setValue}
                 handleMealRemove={handleMealRemove}
+                errors={errors}
+                clearErrors={clearErrors}
                 meals={meals}
                 index={0}
               />
