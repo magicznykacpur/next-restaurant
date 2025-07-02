@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { CreateOrderValue, MealData } from "./create-order.types";
 import { MealSelectController } from "./meal-select-controller";
+import { createOrderAction } from "./create-order.actions";
 
 type CreateOrderProps = {
   open: boolean;
@@ -52,7 +53,7 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
   });
 
   const onSubmit = async (values: CreateOrderValue) => {
-    console.log(values);
+    await createOrderAction(values.meals);
   };
 
   const [formMeals, setFormMeals] = useState<MealData[]>(initialValues.meals);
@@ -80,6 +81,7 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
           <div className="flex flex-col justify-between">
             {formMeals.map((_, index) => (
               <MealSelectController
+                key={index}
                 register={register}
                 setValue={setValue}
                 handleMealRemove={handleMealRemove}

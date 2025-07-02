@@ -1,12 +1,12 @@
-import React from "react";
 
 import { OrderManager } from "@/app/(main)/manager/order-manager";
 import { prisma } from "@/config/prisma.config";
 
 export async function MainPage() {
-  // TODO: get orders from db
+  const orders = await prisma.order.findMany({
+    select: { id: true, createdAt: true, meals: true },
+  });
 
-  // TODO: get meals from db
   const dbMeals = await prisma.meal.findMany({
     select: { id: true, name: true, price: true },
     where: { order: { is: null } },
@@ -23,8 +23,12 @@ export async function MainPage() {
       </header>
 
       <div className="flex flex-col gap-4">
-        {[].map((order, index) => {
+        {orders.map((order, index) => {
           // TODO: calculate total price with reduce
+          const total: number = order.meals.reduce(
+            (prev, curr) => prev + curr.price.toNumber(),
+            0
+          );
 
           return (
             <div key={index} className="border rounded-md p-6">
@@ -34,7 +38,7 @@ export async function MainPage() {
                 {/* TODO: display meals */}
 
                 <div className="w-full flex justify-end">
-                  {/* TODO: display total price */}
+                  {total}
                 </div>
               </div>
             </div>
