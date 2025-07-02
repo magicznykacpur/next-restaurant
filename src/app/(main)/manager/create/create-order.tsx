@@ -22,7 +22,7 @@ type CreateOrderProps = {
 };
 
 const initialValues: CreateOrderValue = {
-  meals: [],
+  meals: [{ id: "", name: "", price: 0, quantity: 1 }],
 };
 
 const schema = z.object({
@@ -57,11 +57,11 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
 
   const [formMeals, setFormMeals] = useState<MealData[]>(initialValues.meals);
   const handleNewMeal = () => {
-    // TODO: add new meal
+    setFormMeals([...formMeals, { id: "", name: "", price: 0, quantity: 1 }]);
   };
 
   const handleMealRemove = (index: number) => () => {
-    // TODO: remove meal
+    setFormMeals(formMeals.filter((_, mIndex) => index !== mIndex));
   };
 
   return (
@@ -74,7 +74,7 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} onChange={() => console.log(errors)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col justify-between">
             {formMeals.length > 0 ? (
               formMeals.map((_, index) => (

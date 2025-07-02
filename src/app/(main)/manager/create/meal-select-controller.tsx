@@ -72,7 +72,7 @@ export function MealSelectController({
     errors.meals && errors.meals[index] && errors.meals[index].quantity;
 
   return (
-    <div className={cn("flex", className)}>
+    <div className={cn("flex my-2.5", className)}>
       <div className="w-1/2">
         <Select onValueChange={handleChange(index)}>
           <SelectTrigger className="w-full">
