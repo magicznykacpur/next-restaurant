@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { createOrderAction } from "./create-order.actions";
 import { CreateOrderValue } from "./create-order.types";
 import { MealSelectController } from "./meal-select-controller";
+import { useEffect } from "react";
 
 type CreateOrderProps = {
   open: boolean;
@@ -22,9 +23,7 @@ type CreateOrderProps = {
   meals: MealModel[];
 };
 
-const initialValues: CreateOrderValue = {
-  meals: [{ id: "", name: "", price: 0, quantity: 1 }],
-};
+const emptyMeal = { id: "", name: "", price: 0, quantity: 1 };
 
 const schema = z.object({
   meals: z.array(
@@ -49,19 +48,29 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
   });
 
   const onSubmit = async (values: CreateOrderValue) => {
+    if (fields.length === 0) {
+      toast.warning("Add a meal first to submit an order.");
+      return;
+    }
+
     const result = await createOrderAction(values.meals);
 
     if (result.error) {
       toast.error("Something went wrong when submitting your order...");
     } else {
       toast.success("Order has been submitted successfully.");
+      remove();
+      append(emptyMeal);
     }
   };
 
-  const handleNewMeal = () =>
-    append({ id: "", name: "", price: 0, quantity: 1 });
+  const handleNewMeal = () => append(emptyMeal);
 
   const handleMealRemove = (index: number) => remove(index);
+
+  useEffect(() => {
+    append(emptyMeal);
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -93,7 +102,7 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
             className="my-6"
             size="sm"
           >
-            Add another meal
+            {fields.length === 0 ? "Add a meal" : "Add another meal"}
           </Button>
 
           <div className="flex items-center justify-end">

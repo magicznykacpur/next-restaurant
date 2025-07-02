@@ -37,12 +37,11 @@ export function MealSelectController({
     formState: { errors },
   } = form;
 
-  const handleChange = (index: number) => (value: string) => {
-    setValue(`meals.${index}.name`, value);
-
+  const handleChange = (value: string) => {
     const id = meals.filter((meal) => meal.name === value)[0].id;
     const price = meals.filter((meal) => meal.name === value)[0].price;
 
+    setValue(`meals.${index}.name`, value);
     setValue(`meals.${index}.id`, id);
     setValue(`meals.${index}.price`, price);
 
@@ -57,7 +56,7 @@ export function MealSelectController({
   return (
     <div className={cn("flex my-2.5", className)}>
       <div className="w-1/2">
-        <Select onValueChange={handleChange(index)}>
+        <Select onValueChange={(value) => handleChange(value)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Choose a meal" />
           </SelectTrigger>
