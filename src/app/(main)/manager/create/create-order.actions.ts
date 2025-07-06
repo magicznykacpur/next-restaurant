@@ -35,7 +35,7 @@ export async function createOrderAction(
     revalidatePath("/");
 
     return { orderId, mealsCount };
-  } catch (e) {
+  } catch (e: unknown) {
     return { message: (e as Error).message };
   }
 }
