@@ -28,6 +28,6 @@ export function isCreateOrderActionPayload(
 
 export function isCreateOrderActionError(
   error: CreateOrderActionPayload | CreateOrderActionError
-): error is CreateOrderActionPayload {
+): error is CreateOrderActionError {
   return (error as CreateOrderActionError).message !== undefined;
 }
