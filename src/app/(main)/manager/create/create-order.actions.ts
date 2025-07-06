@@ -1,14 +1,19 @@
 "use server";
 
 import { prisma } from "@/config/prisma.config";
+import { Meal } from "@/generated/prisma";
 import { Decimal } from "@/generated/prisma/runtime/library";
-import { CreateOrderActionResult, MealData } from "./create-order.types";
-import { v4 as uuidv4 } from "uuid";
 import { revalidatePath } from "next/cache";
+import { v4 as uuidv4 } from "uuid";
+import {
+  CreateOrderActionError,
+  CreateOrderActionPayload,
+  MealData,
+} from "./create-order.types";
 
 export async function createOrderAction(
-  meals: MealData[]
-): Promise<CreateOrderActionResult> {
+  mealData: MealData[]
+): Promise<CreateOrderActionPayload | CreateOrderActionError> {
   try {
     const orderId = uuidv4();
     const orderResult = await prisma.order.create({
@@ -16,26 +21,25 @@ export async function createOrderAction(
       select: { id: true },
     });
 
-    const mealData: any[] = [];
-    meals.forEach((meal) => {
-      for (let i = 1; i <= meal.quantity; i++) {
-        mealData.push({
-          id: uuidv4(),
-          name: meal.name,
-          price: Decimal(meal.price),
-          orderId,
-        });
-      }
+    const meals: Meal[] = [];
+    mealData.forEach((meal) => {
+      meals.push({
+        id: uuidv4(),
+        name: meal.name,
+        price: Decimal(meal.price),
+        quantity: meal.quantity,
+        orderId,
+      });
     });
 
     const mealsResult = await prisma.meal.createMany({
-      data: mealData,
+      data: meals,
     });
 
     revalidatePath("/");
-    
+
     return { orderId: orderResult.id, mealsCount: mealsResult.count };
   } catch (e) {
-    return { error: "couldn't create order" };
+    return { message: "couldn't create order" };
   }
 }

@@ -38,11 +38,9 @@ export function MealSelectController({
   } = form;
 
   const handleChange = (value: string) => {
-    const id = meals.filter((meal) => meal.name === value)[0].id;
     const price = meals.filter((meal) => meal.name === value)[0].price;
 
     setValue(`meals.${index}.name`, value);
-    setValue(`meals.${index}.id`, id);
     setValue(`meals.${index}.price`, price);
 
     clearErrors(`meals.${index}`);

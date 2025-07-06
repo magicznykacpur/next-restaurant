@@ -13,7 +13,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { createOrderAction } from "./create-order.actions";
-import { CreateOrderValue } from "./create-order.types";
+import {
+  CreateOrderValue,
+  isCreateOrderActionError,
+} from "./create-order.types";
 import { MealSelectController } from "./meal-select-controller";
 import { useEffect } from "react";
 
@@ -28,7 +31,6 @@ const emptyMeal = { id: "", name: "", price: 0, quantity: 1 };
 const schema = z.object({
   meals: z.array(
     z.object({
-      id: z.string(),
       price: z.number(),
       name: z.string().nonempty(),
       quantity: z.number().min(1),
@@ -55,7 +57,7 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
 
     const result = await createOrderAction(values.meals);
 
-    if (result.error) {
+    if (isCreateOrderActionError(result)) {
       toast.error("Something went wrong when submitting your order...");
     } else {
       toast.success("Order has been submitted successfully.");
@@ -106,7 +108,11 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
           </Button>
 
           <div className="flex items-center justify-end">
-            <Button type="submit" variant="default">
+            <Button
+              type="submit"
+              variant="default"
+              disabled={form.formState.isSubmitting}
+            >
               Submit
             </Button>
           </div>
