@@ -11,6 +11,7 @@ CREATE TABLE "meal" (
     "id" TEXT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "price" DECIMAL(4,2) NOT NULL,
+    "quantity" INTEGER NOT NULL,
     "orderId" TEXT,
 
     CONSTRAINT "meal_pkey" PRIMARY KEY ("id")

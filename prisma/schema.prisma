@@ -23,11 +23,12 @@ model Order {
 }
 
 model Meal {
-  id      String  @id @default(uuid())
-  name    String  @db.VarChar(255)
-  price   Decimal @db.Decimal(4, 2)
-  orderId String?
-  order   Order?  @relation(fields: [orderId], references: [id])
+  id       String  @id @default(uuid())
+  name     String  @db.VarChar(255)
+  price    Decimal @db.Decimal(4, 2)
+  quantity Int
+  orderId  String?
+  order    Order?  @relation(fields: [orderId], references: [id])
 
   @@map("meal")
 }
