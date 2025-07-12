@@ -61,7 +61,9 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
   };
 
   const handleMealRemove = (index: number) => () => {
-    setFormMeals(formMeals.filter((_, mIndex) => index !== mIndex));
+    if (index > 0 && formMeals.length > 0) {
+      setFormMeals(formMeals.filter((_, mIndex) => index !== mIndex));
+    }
   };
 
   return (
@@ -76,19 +78,7 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col justify-between">
-            {formMeals.length > 0 ? (
-              formMeals.map((_, index) => (
-                <MealSelectController
-                  register={register}
-                  setValue={setValue}
-                  handleMealRemove={handleMealRemove}
-                  errors={errors}
-                  clearErrors={clearErrors}
-                  meals={meals}
-                  index={index}
-                />
-              ))
-            ) : (
+            {formMeals.map((_, index) => (
               <MealSelectController
                 register={register}
                 setValue={setValue}
@@ -96,9 +86,9 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
                 errors={errors}
                 clearErrors={clearErrors}
                 meals={meals}
-                index={0}
+                index={index}
               />
-            )}
+            ))}
           </div>
 
           <Button
