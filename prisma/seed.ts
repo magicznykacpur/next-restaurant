@@ -8,25 +8,29 @@ const meals: Meal[] = [
     id: uuidv4(),
     name: "Salmon Nigiri",
     price: Decimal(24.99),
-    orderId: null
+    orderId: null,
+    quantity: 0,
   },
   {
     id: uuidv4(),
     name: "Tuna Roll",
     price: Decimal(21.99),
     orderId: null,
+    quantity: 0,
   },
   {
     id: uuidv4(),
     name: "Eel Avocado",
     price: Decimal(22.99),
     orderId: null,
+    quantity: 0,
   },
   {
     id: uuidv4(),
     name: "California Roll",
     price: Decimal(23.99),
     orderId: null,
+    quantity: 0,
   },
 ];
 
