@@ -26,7 +26,7 @@ type CreateOrderProps = {
   meals: MealModel[];
 };
 
-const emptyMeal = { id: "", name: "", price: 0, quantity: 1 };
+const emptyMeal = { name: "", price: 0, quantity: 1 };
 
 const schema = z.object({
   meals: z.array(
