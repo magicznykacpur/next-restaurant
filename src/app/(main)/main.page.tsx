@@ -19,23 +19,6 @@ export async function MainPage() {
       return { ...m, price: m.price.toNumber() };
     });
 
-  const getFormattedMeals = (meals: MealDbModel[]) => {
-    const formattedMeals: {
-      [key: string]: { price: number; quantity: number };
-    } = {};
-
-    meals.reduce((prev, curr) => {
-      prev[curr.name] = {
-        price: curr.price.toNumber(),
-        quantity: prev[curr.name] ? prev[curr.name].quantity + 1 : 1,
-      };
-
-      return prev;
-    }, formattedMeals);
-
-    return formattedMeals;
-  };
-
   return (
     <div className="min-h-screen p-12">
       <header className="flex justify-between items-center mb-6">
@@ -46,7 +29,7 @@ export async function MainPage() {
       <div className="flex flex-col gap-4">
         {orders.map((order, index) => {
           const total: number = order.meals.reduce(
-            (prev, curr) => prev + curr.price.toNumber(),
+            (prev, curr) => prev + curr.price.toNumber() * curr.quantity,
             0
           );
 
@@ -66,24 +49,19 @@ export async function MainPage() {
               </div>
 
               <div className="mt-4">
-                {Object.entries(getFormattedMeals(order.meals)).map(
-                  (entry, index) => (
-                    <div
-                      key={`meal-${index}`}
-                      className="grid grid-cols-3 w-3/5"
-                    >
-                      <span>
-                        <strong>{entry[0]}</strong>{" "}
-                      </span>
-                      <span className="text-emerald-700">
-                        {formatPrice(entry[1].price)}
-                      </span>
-                      <span className="text-">
-                        servings: <strong>{entry[1].quantity}</strong>
-                      </span>
-                    </div>
-                  )
-                )}
+                {order.meals.map((meal, index) => (
+                  <div key={`meal-${index}`} className="grid grid-cols-3 w-3/5">
+                    <span>
+                      <strong>{meal.name}</strong>
+                    </span>
+                    <span className="text-emerald-700">
+                      {formatPrice(meal.price.toNumber())}
+                    </span>
+                    <span className="text-">
+                      servings: <strong>{meal.quantity}</strong>
+                    </span>
+                  </div>
+                ))}
 
                 <div className="w-full flex justify-end text-emerald-700">
                   <span>
