@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -11,10 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { MealModel } from "@/models/meal.model";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { createOrderAction } from "./create-order.actions";
-import { CreateOrderValue, MealData } from "./create-order.types";
+import { CreateOrderValue } from "./create-order.types";
 import { MealSelectController } from "./meal-select-controller";
 
 type CreateOrderProps = {
@@ -32,28 +31,22 @@ const schema = z.object({
     z.object({
       id: z.string(),
       price: z.number(),
-      name: z
-        .string()
-        .nonempty({ message: "You need to select at least one meal." }),
-      quantity: z
-        .number({ message: "Quantity cannot be lower than 1." })
-        .min(1),
+      name: z.string().nonempty(),
+      quantity: z.number().min(1),
     })
   ),
 });
 
 export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
-  const {
-    handleSubmit,
-    formState: { errors },
-    clearErrors,
-    setValue,
-    register,
-    reset: resetForm,
-  } = useForm<z.infer<typeof schema>>({
+  const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
+    mode: "onChange",
+    shouldUnregister: true,
   });
-  const [formMeals, setFormMeals] = useState<MealData[]>(initialValues.meals);
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "meals",
+  });
 
   const onSubmit = async (values: CreateOrderValue) => {
     const result = await createOrderAction(values.meals);
@@ -61,21 +54,14 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
     if (result.error) {
       toast.error("Something went wrong when submitting your order...");
     } else {
-      setFormMeals(initialValues.meals);
-      resetForm();
       toast.success("Order has been submitted successfully.");
     }
   };
 
-  const handleNewMeal = () => {
-    setFormMeals([...formMeals, { id: "", name: "", price: 0, quantity: 1 }]);
-  };
+  const handleNewMeal = () =>
+    append({ id: "", name: "", price: 0, quantity: 1 });
 
-  const handleMealRemove = (index: number) => () => {
-    if (index > 0 && formMeals.length > 0) {
-      setFormMeals(formMeals.filter((_, mIndex) => index !== mIndex));
-    }
-  };
+  const handleMealRemove = (index: number) => remove(index);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -87,16 +73,13 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col justify-between">
-            {formMeals.map((_, index) => (
+            {fields.map((item, index) => (
               <MealSelectController
-                key={index}
-                register={register}
-                setValue={setValue}
+                form={form}
+                key={item.id}
                 handleMealRemove={handleMealRemove}
-                errors={errors}
-                clearErrors={clearErrors}
                 meals={meals}
                 index={index}
               />

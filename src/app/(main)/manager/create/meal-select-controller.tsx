@@ -9,51 +9,34 @@ import {
   SelectValue,
 } from "@/components/form/select";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { MealModel } from "@/models/meal.model";
 import { cn } from "@/utils/cn";
-import {
-  FieldErrors,
-  UseFormClearErrors,
-  UseFormRegister,
-  UseFormSetValue,
-} from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { MealData } from "./create-order.types";
-import { Label } from "@/components/ui/label";
 
 type MealSelectControllerProps = {
-  setValue: UseFormSetValue<{
-    meals: MealData[];
-  }>;
-  register: UseFormRegister<{
-    meals: MealData[];
-  }>;
-  handleMealRemove: (index: number) => () => void;
-  errors: FieldErrors<{
-    meals: MealData[];
-  }>;
-  clearErrors: UseFormClearErrors<{
-    meals: {
-      id: string;
-      name: string;
-      price: number;
-      quantity: number;
-    }[];
-  }>;
+  form: UseFormReturn<{ meals: MealData[] }, any, { meals: MealData[] }>;
+  handleMealRemove: (index: number) => void;
   index: number;
   meals: MealModel[];
   className?: string;
 };
 
 export function MealSelectController({
-  register,
-  setValue,
+  form,
   handleMealRemove,
-  clearErrors,
-  errors,
   index,
   meals,
   className,
 }: MealSelectControllerProps) {
+  const {
+    setValue,
+    clearErrors,
+    register,
+    formState: { errors },
+  } = form;
+
   const handleChange = (index: number) => (value: string) => {
     setValue(`meals.${index}.name`, value);
 
@@ -63,7 +46,7 @@ export function MealSelectController({
     setValue(`meals.${index}.id`, id);
     setValue(`meals.${index}.price`, price);
 
-    clearErrors(`meals.${index}.name`);
+    clearErrors(`meals.${index}`);
   };
 
   const isNameError =
@@ -96,6 +79,7 @@ export function MealSelectController({
           </Label>
         )}
       </div>
+
       <div className="w-1/8 ml-5">
         <Input
           defaultValue={1}
@@ -110,10 +94,11 @@ export function MealSelectController({
           </Label>
         )}
       </div>
+
       <Button
         type="button"
         variant="destructive"
-        onClick={handleMealRemove(index)}
+        onClick={() => handleMealRemove(index)}
         className="ml-auto"
       >
         X
