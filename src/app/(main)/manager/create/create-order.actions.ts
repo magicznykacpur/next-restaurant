@@ -28,13 +28,13 @@ export async function createOrderAction(
       };
     });
 
-    const mealsResult = await prisma.meal.createMany({
+    const { count: mealsCount } = await prisma.meal.createMany({
       data: meals,
     });
 
     revalidatePath("/");
 
-    return { orderId, mealsCount: mealsResult.count };
+    return { orderId, mealsCount };
   } catch (e) {
     return { message: (e as Error).message };
   }
