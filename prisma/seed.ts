@@ -3,7 +3,6 @@ import { prisma } from "../src/config/prisma.config";
 import { Meal } from "../src/generated/prisma";
 import { Decimal } from "../src/generated/prisma/runtime/library";
 
-// TODO: seed meals
 const meals: Meal[] = [
   {
     id: uuidv4(),
