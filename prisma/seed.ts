@@ -1,7 +1,7 @@
+import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../src/config/prisma.config";
 import { Meal } from "../src/generated/prisma";
 import { Decimal } from "../src/generated/prisma/runtime/library";
-import { v4 as uuidv4 } from "uuid";
 
 // TODO: seed meals
 const meals: Meal[] = [
