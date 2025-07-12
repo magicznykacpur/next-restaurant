@@ -1,6 +1,7 @@
-
 import { OrderManager } from "@/app/(main)/manager/order-manager";
 import { prisma } from "@/config/prisma.config";
+import { formatPrice } from "@/utils/format";
+import { ToastContainer, toast } from "react-toastify";
 
 export async function MainPage() {
   const orders = await prisma.order.findMany({
@@ -24,7 +25,6 @@ export async function MainPage() {
 
       <div className="flex flex-col gap-4">
         {orders.map((order, index) => {
-          // TODO: calculate total price with reduce
           const total: number = order.meals.reduce(
             (prev, curr) => prev + curr.price.toNumber(),
             0
@@ -32,19 +32,24 @@ export async function MainPage() {
 
           return (
             <div key={index} className="border rounded-md p-6">
-              {/* TODO: display id and creation date */}
+              <div className="flex flex-col">
+                <strong>{`id: ${order.id.slice(0, 8)}`}</strong>
+                <strong>{`creation date: ${order.createdAt.toLocaleDateString()} ${order.createdAt.toLocaleTimeString()}`}</strong>
+              </div>
 
               <div className="mt-4">
                 {/* TODO: display meals */}
 
                 <div className="w-full flex justify-end">
-                  {total}
+                  {formatPrice(total)}
                 </div>
               </div>
             </div>
           );
         })}
       </div>
+
+      <ToastContainer />
     </div>
   );
 }
