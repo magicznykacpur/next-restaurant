@@ -49,9 +49,11 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
     clearErrors,
     setValue,
     register,
+    reset: resetForm,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
+  const [formMeals, setFormMeals] = useState<MealData[]>(initialValues.meals);
 
   const onSubmit = async (values: CreateOrderValue) => {
     const result = await createOrderAction(values.meals);
@@ -59,11 +61,12 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
     if (result.error) {
       toast.error("Something went wrong when submitting your order...");
     } else {
+      setFormMeals(initialValues.meals);
+      resetForm();
       toast.success("Order has been submitted successfully.");
     }
   };
 
-  const [formMeals, setFormMeals] = useState<MealData[]>(initialValues.meals);
   const handleNewMeal = () => {
     setFormMeals([...formMeals, { id: "", name: "", price: 0, quantity: 1 }]);
   };
