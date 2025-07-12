@@ -1,7 +1,8 @@
 import { OrderManager } from "@/app/(main)/manager/order-manager";
 import { prisma } from "@/config/prisma.config";
+import { MealDbModel } from "@/models/meal.model";
 import { formatPrice } from "@/utils/format";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 export async function MainPage() {
   const orders = await prisma.order.findMany({
@@ -12,15 +13,34 @@ export async function MainPage() {
     select: { id: true, name: true, price: true },
     where: { order: { is: null } },
   });
-  const meals = dbMeals.map((m) => {
-    return { ...m, price: m.price.toNumber() };
-  });
+
+  const mapToMealModels = (meals: MealDbModel[]) =>
+    meals.map((m) => {
+      return { ...m, price: m.price.toNumber() };
+    });
+
+  const getFormattedMeals = (meals: MealDbModel[]) => {
+    const formattedMeals: {
+      [key: string]: { price: number; quantity: number };
+    } = {};
+
+    meals.reduce((prev, curr) => {
+      prev[curr.name] = {
+        price: curr.price.toNumber(),
+        quantity: prev[curr.name] ? prev[curr.name].quantity + 1 : 1,
+      };
+
+      return prev;
+    }, formattedMeals);
+
+    return formattedMeals;
+  };
 
   return (
     <div className="min-h-screen p-12">
       <header className="flex justify-between items-center mb-6">
         <h1 className="font-black text-xl">Orders</h1>
-        <OrderManager meals={meals} />
+        <OrderManager meals={mapToMealModels(dbMeals)} />
       </header>
 
       <div className="flex flex-col gap-4">
@@ -38,10 +58,25 @@ export async function MainPage() {
               </div>
 
               <div className="mt-4">
-                {/* TODO: display meals */}
+                {Object.entries(getFormattedMeals(order.meals)).map((entry) => (
+                  <div className="grid grid-cols-3 w-3/5">
+                    <span>
+                      <strong>{entry[0]}</strong>{" "}
+                    </span>
+                    <span className="text-emerald-700">
+                      {formatPrice(entry[1].price)}
+                    </span>
+                    <span className="text-">
+                      servings - <strong>{entry[1].quantity}</strong>
+                    </span>
+                  </div>
+                ))}
 
-                <div className="w-full flex justify-end">
-                  {formatPrice(total)}
+                <div className="w-full flex justify-end text-emerald-700">
+                  <span>
+                    <strong className="text-black mr-2">total:</strong>
+                    {formatPrice(total)}
+                  </span>
                 </div>
               </div>
             </div>
