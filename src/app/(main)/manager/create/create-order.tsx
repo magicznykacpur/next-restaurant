@@ -58,6 +58,7 @@ export function CreateOrder({ open, onOpenChange, meals }: CreateOrderProps) {
     const result = await createOrderAction(values.meals);
 
     if (isCreateOrderActionError(result)) {
+      console.error(result.message)
       toast.error("Something went wrong when submitting your order...");
     } else {
       toast.success("Order has been submitted successfully.");
